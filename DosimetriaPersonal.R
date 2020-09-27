@@ -123,6 +123,19 @@ FilasFactor <- function(x){
 #------------------------------------------------------------------------------------------
 # MEDICOS
 
+# Trabajador M23803LU
+M23803LU <- Trabajador(DP2010, DP2011, DP2012, DP2013, DP2014, DP2015, DP2016, DP2017, DP2018, DP2019, 2) 
+M23803LU <- NombreColumnas(M23803LU)
+M23803LU <- Limpieza(M23803LU)
+M23803LU <- TotalFilaColumna(M23803LU)
+M23803LU <- FilasFactor(M23803LU)
+
+# Trabajador M23805MO
+M23805MO <- Trabajador(DP2010, DP2011, DP2012, DP2013, DP2014, DP2015, DP2016, DP2017, DP2018, DP2019, 4) 
+M23805MO <- NombreColumnas(M23805MO)
+M23805MO <- Limpieza(M23805MO)
+M23805MO <- TotalFilaColumna(M23805MO)
+M23805MO <- FilasFactor(M23805MO)
 #------------------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------------------
@@ -141,12 +154,17 @@ F23810LD <- NombreColumnas(F23810LD)
 F23810LD <- Limpieza(F23810LD)
 F23810LD <- TotalFilaColumna(F23810LD)
 F23810LD <- FilasFactor(F23810LD)
-
 #------------------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------------------
 # TECNICOS
 
+# Trabajador T23801EE
+T23801EE <- Trabajador(DP2010, DP2011, DP2012, DP2013, DP2014, DP2015, DP2016, DP2017, DP2018, DP2019, 1) 
+T23801EE <- NombreColumnas(T23801EE)
+T23801EE <- Limpieza(T23801EE)
+T23801EE <- TotalFilaColumna(T23801EE)
+T23801EE <- FilasFactor(T23801EE)
 #------------------------------------------------------------------------------------------
 
 
@@ -155,7 +173,42 @@ F23810LD <- FilasFactor(F23810LD)
 # Análisis exploratorio
 #------------------------------
 
+#-----------------------------------------------------------------------------------------------------------
+# MEDICOS
 
+# Trabajador M23803LU
+ggplot(M23803LU[1:12,], aes(x=M23803LU$Mes[1:12], y=M23803LU$MesTotal[1:12], fill = M23803LU$Mes[1:12])) +
+  geom_bar(stat="identity") +
+  ggtitle("Dosis acumulada [mSv] en los años 2010-2019")+
+  ylim(0,3) +
+  theme_minimal() +
+  theme(
+    axis.title = element_blank(),
+    axis.text=element_text(size=8),
+    legend.title = element_blank(),
+    legend.text= element_text(size=8),
+    plot.caption = element_text(hjust = 0)
+  ) +
+  coord_polar(start = 0)+
+  geom_text(aes(label=M23803LU$MesTotal[1:12]), position=position_dodge(width=0.5), vjust=0)
+
+
+# Trabajador M23805MO
+ggplot(M23805MO[1:12,], aes(x=M23805MO$Mes[1:12], y=M23805MO$MesTotal[1:12], fill = M23805MO$Mes[1:12])) +
+  geom_bar(stat="identity") +
+  ggtitle("Dosis acumulada [mSv] en los años 2010-2019")+
+  ylim(0,3) +
+  theme_minimal() +
+  theme(
+    axis.title = element_blank(),
+    axis.text=element_text(size=8),
+    legend.title = element_blank(),
+    legend.text= element_text(size=8),
+    plot.caption = element_text(hjust = 0)
+  ) +
+  coord_polar(start = 0)+
+  geom_text(aes(label=M23805MO$MesTotal[1:12]), position=position_dodge(width=0.5), vjust=0)
+#-----------------------------------------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------------------------------------
 # FISICOS MEDICOS
@@ -163,7 +216,7 @@ F23810LD <- FilasFactor(F23810LD)
 # Trabajador F23804EH
 ggplot(F23804EH[1:12,], aes(x=F23804EH$Mes[1:12], y=F23804EH$MesTotal[1:12], fill = F23804EH$Mes[1:12])) +
   geom_bar(stat="identity") +
-  ggtitle("Dosis expuesta [mSv] en los años 2010-2019")+
+  ggtitle("Dosis acumulada [mSv] en los años 2010-2019")+
   ylim(0,3) +
   theme_minimal() +
   theme(
@@ -180,7 +233,7 @@ ggplot(F23804EH[1:12,], aes(x=F23804EH$Mes[1:12], y=F23804EH$MesTotal[1:12], fil
 # Trabajador F23810LD
 ggplot(F23810LD[1:12,], aes(x=F23810LD$Mes[1:12], y=F23810LD$MesTotal[1:12], fill = F23810LD$Mes[1:12])) +
   geom_bar(stat="identity") +
-  ggtitle("Dosis expuesta [mSv] en los años 2010-2019")+
+  ggtitle("Dosis acumulada [mSv] en los años 2010-2019")+
   ylim(0,3) +
   theme_minimal() +
   theme(
