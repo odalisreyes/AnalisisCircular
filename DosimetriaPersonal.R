@@ -52,24 +52,24 @@ DP2019 <- read_excel("Reporte dosimetrico 2019.xlsx", sheet = 1, range =  'A5:P2
 #---------------------------------
 
 # Proposito: Escoger los datos de un solo trabajador
-# @param: a-g (dataframe), trabajador (número de columna)
-Trabajador <- function(a,b,c,d,e,f,g,h,i,j,trabajador){
-  # transpuesta de los archivos de excel
-  a <- t(a); b <- t(b); c <- t(c); d <- t(d); e <- t(e); f <- t(f); g <- t(g); h <- t(h); i <- t(i); j <- t(j);
-  # se escoge la fila columna del trabajador a usar
-  a <- a[,trabajador]
-  b <- b[,trabajador]
-  c <- c[,trabajador]
-  d <- d[,trabajador]
-  e <- e[,trabajador]
-  f <- f[,trabajador]
-  g <- g[,trabajador]
-  h <- h[,trabajador]
-  i <- i[,trabajador]
-  j <- j[,trabajador]
+# @param: num1, num2 (últimos dos dígitos del codigo del trabajador)
+Trabajador <- function(num1,num2){
+  # se establece el codigo del trabajador para sacar los datos
+  codigo = paste0('238-',num1,num2)
+  # se sacan esos datos, se coloca transpuesta y se convierte a un dataframe
+  a <- as.data.frame(t(DP2010[which(DP2010$CODIGO==codigo),]))
+  b <- as.data.frame(t(DP2011[which(DP2011$CODIGO==codigo),]))
+  c <- as.data.frame(t(DP2012[which(DP2012$CODIGO==codigo),]))
+  d <- as.data.frame(t(DP2013[which(DP2013$CODIGO==codigo),]))
+  e <- as.data.frame(t(DP2014[which(DP2014$CODIGO==codigo),]))
+  f <- as.data.frame(t(DP2015[which(DP2015$CODIGO==codigo),]))
+  g <- as.data.frame(t(DP2016[which(DP2016$CODIGO==codigo),]))
+  h <- as.data.frame(t(DP2017[which(DP2017$CODIGO==codigo),]))
+  i <- as.data.frame(t(DP2018[which(DP2018$CODIGO==codigo),]))
+  j <- as.data.frame(t(DP2019[which(DP2019$CODIGO==codigo),]))
   # se combinan los datos por columnas
-  x <- cbind(a,b,c,d,e,f,g,h,i,j)
-  x <- as.data.frame(x)
+  newdf <- cbind(a,b,c,d,e,f,g,h,i,j)
+  newdf <- as.data.frame(newdf)
 }
 
 # Proposito: Cambiar el nombre de las columnas por el año que corresponde
@@ -142,7 +142,7 @@ M23805MO <- FilasFactor(M23805MO)
 # FISICOS MEDICOS
 
 # Trabajador F23804EH
-F23804EH <- Trabajador(DP2010, DP2011, DP2012, DP2013, DP2014, DP2015, DP2016, DP2017, DP2018, DP2019, 3) 
+F23804EH <- Trabajador(0,4)
 F23804EH <- NombreColumnas(F23804EH)
 F23804EH <- Limpieza(F23804EH)
 F23804EH <- TotalFilaColumna(F23804EH)
