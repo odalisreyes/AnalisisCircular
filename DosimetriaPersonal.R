@@ -21,11 +21,11 @@ if(!require(ggplot2)) {install.packages("ggplot2")}
 #------------------------------
 # Se importan las librerías 
 #------------------------------
-library("readxl")
-library("circular")
-library('tidyverse')
+library("readxl") # para leer archivos excel
+library("circular") # para hacer estadística circular
+library('tidyverse') 
 library("dplyr")
-library('ggplot2')
+library('ggplot2') # para hacer gráficas bonitas
 
 #---------------------
 # Carga de archivos
@@ -88,9 +88,10 @@ NombreColumnas <- function(x){
 # Proposito: Limpiar los datos
 # @param: x (dataframe)
 Limpieza <- function(x){
-  x[x == "---"] <- NA 
-  x[x == "***"] <- NA
-  x[x == "M"] <- 0.20
+  x[x == "*"] <- 0
+  x[x == "---"] <- 0 
+  x[x == "***"] <- 0
+  x[x == "M"] <- 0.2
   return(x)
 }
 
@@ -121,17 +122,17 @@ FilasFactor <- function(x){
 #------------------------------
 
 #------------------------------------------------------------------------------------------
-# MEDICOS
+# MEDICOS = 2
 
 # Trabajador M23803LU
-M23803LU <- Trabajador(DP2010, DP2011, DP2012, DP2013, DP2014, DP2015, DP2016, DP2017, DP2018, DP2019, 2) 
+M23803LU <- Trabajador(0,3) 
 M23803LU <- NombreColumnas(M23803LU)
 M23803LU <- Limpieza(M23803LU)
 M23803LU <- TotalFilaColumna(M23803LU)
 M23803LU <- FilasFactor(M23803LU)
 
 # Trabajador M23805MO
-M23805MO <- Trabajador(DP2010, DP2011, DP2012, DP2013, DP2014, DP2015, DP2016, DP2017, DP2018, DP2019, 4) 
+M23805MO <- Trabajador(0,5) 
 M23805MO <- NombreColumnas(M23805MO)
 M23805MO <- Limpieza(M23805MO)
 M23805MO <- TotalFilaColumna(M23805MO)
@@ -139,7 +140,7 @@ M23805MO <- FilasFactor(M23805MO)
 #------------------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------------------
-# FISICOS MEDICOS
+# FISICOS MEDICOS = 2
 
 # Trabajador F23804EH
 F23804EH <- Trabajador(0,4)
@@ -149,7 +150,7 @@ F23804EH <- TotalFilaColumna(F23804EH)
 F23804EH <- FilasFactor(F23804EH)
 
 # Trabajador F23810LD
-F23810LD <- Trabajador(DP2010, DP2011, DP2012, DP2013, DP2014, DP2015, DP2016, DP2017, DP2018, DP2019, 5) 
+F23810LD <- Trabajador(1,0) 
 F23810LD <- NombreColumnas(F23810LD)
 F23810LD <- Limpieza(F23810LD)
 F23810LD <- TotalFilaColumna(F23810LD)
@@ -157,10 +158,35 @@ F23810LD <- FilasFactor(F23810LD)
 #------------------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------------------
-# TECNICOS
+# TECNICOS = 3
 
 # Trabajador T23801EE
-T23801EE <- Trabajador(DP2010, DP2011, DP2012, DP2013, DP2014, DP2015, DP2016, DP2017, DP2018, DP2019, 1) 
+T23801EE <- Trabajador(0,1) 
+T23801EE <- NombreColumnas(T23801EE)
+T23801EE <- Limpieza(T23801EE)
+T23801EE <- TotalFilaColumna(T23801EE)
+T23801EE <- FilasFactor(T23801EE)
+
+# Trabajador T23826PM
+T23826PM <- Trabajador(2,6) 
+T23826PM <- NombreColumnas(T23826PM)
+T23826PM <- Limpieza(T23826PM)
+T23826PM <- TotalFilaColumna(T23826PM)
+T23826PM <- FilasFactor(T23826PM)
+
+# Trabajador T23819SR
+T23819SR <- Trabajador(1,9) 
+T23819SR <- NombreColumnas(T23819SR)
+T23819SR <- Limpieza(T23819SR)
+T23819SR <- TotalFilaColumna(T23819SR)
+T23819SR <- FilasFactor(T23819SR)
+#------------------------------------------------------------------------------------------
+
+#------------------------------------------------------------------------------------------
+# INGENIEROS = 1
+
+# Trabajador I23822CR
+I23822CR <- Trabajador(2,2) 
 T23801EE <- NombreColumnas(T23801EE)
 T23801EE <- Limpieza(T23801EE)
 T23801EE <- TotalFilaColumna(T23801EE)
@@ -179,7 +205,7 @@ T23801EE <- FilasFactor(T23801EE)
 # Trabajador M23803LU
 ggplot(M23803LU[1:12,], aes(x=M23803LU$Mes[1:12], y=M23803LU$MesTotal[1:12], fill = M23803LU$Mes[1:12])) +
   geom_bar(stat="identity") +
-  ggtitle("Dosis acumulada [mSv] en los años 2010-2019")+
+  ggtitle("Dosis acumulada del trabajador M23803LU en los años 2010-2019 distribuida por mes [mSv]")+
   ylim(0,3) +
   theme_minimal() +
   theme(
@@ -196,7 +222,7 @@ ggplot(M23803LU[1:12,], aes(x=M23803LU$Mes[1:12], y=M23803LU$MesTotal[1:12], fil
 # Trabajador M23805MO
 ggplot(M23805MO[1:12,], aes(x=M23805MO$Mes[1:12], y=M23805MO$MesTotal[1:12], fill = M23805MO$Mes[1:12])) +
   geom_bar(stat="identity") +
-  ggtitle("Dosis acumulada [mSv] en los años 2010-2019")+
+  ggtitle("Dosis acumulada del trabajador M23805MO en los años 2010-2019 distribuida por mes [mSv]")+
   ylim(0,3) +
   theme_minimal() +
   theme(
@@ -216,7 +242,7 @@ ggplot(M23805MO[1:12,], aes(x=M23805MO$Mes[1:12], y=M23805MO$MesTotal[1:12], fil
 # Trabajador F23804EH
 ggplot(F23804EH[1:12,], aes(x=F23804EH$Mes[1:12], y=F23804EH$MesTotal[1:12], fill = F23804EH$Mes[1:12])) +
   geom_bar(stat="identity") +
-  ggtitle("Dosis acumulada [mSv] en los años 2010-2019")+
+  ggtitle("Dosis acumulada del trabajador F23804EH en los años 2010-2019 distribuida por mes [mSv]")+
   ylim(0,3) +
   theme_minimal() +
   theme(
@@ -233,7 +259,7 @@ ggplot(F23804EH[1:12,], aes(x=F23804EH$Mes[1:12], y=F23804EH$MesTotal[1:12], fil
 # Trabajador F23810LD
 ggplot(F23810LD[1:12,], aes(x=F23810LD$Mes[1:12], y=F23810LD$MesTotal[1:12], fill = F23810LD$Mes[1:12])) +
   geom_bar(stat="identity") +
-  ggtitle("Dosis acumulada [mSv] en los años 2010-2019")+
+  ggtitle("Dosis acumulada del trabajador F23810LD en los años 2010-2019 distribuida por mes [mSv]")+
   ylim(0,3) +
   theme_minimal() +
   theme(
@@ -247,6 +273,58 @@ ggplot(F23810LD[1:12,], aes(x=F23810LD$Mes[1:12], y=F23810LD$MesTotal[1:12], fil
   geom_text(aes(label=F23810LD$MesTotal[1:12]), position=position_dodge(width=0.5), vjust=0)
 #-----------------------------------------------------------------------------------------------------------
 
+#-----------------------------------------------------------------------------------------------------------
+# TECNICOS
+
+# Trabajador T23801EE
+ggplot(T23801EE[1:12,], aes(x=T23801EE$Mes[1:12], y=T23801EE$MesTotal[1:12], fill = T23801EE$Mes[1:12])) +
+  geom_bar(stat="identity") +
+  ggtitle("Dosis acumulada del trabajador T23801EE en los años 2010-2019 distribuida por mes [mSv]")+
+  ylim(0,3) +
+  theme_minimal() +
+  theme(
+    axis.title = element_blank(),
+    axis.text=element_text(size=8),
+    legend.title = element_blank(),
+    legend.text= element_text(size=8),
+    plot.caption = element_text(hjust = 0)
+  ) +
+  coord_polar(start = 0)+
+  geom_text(aes(label=T23801EE$MesTotal[1:12]), position=position_dodge(width=0.5), vjust=0)
+
+
+# Trabajador T23826PM
+ggplot(T23826PM[1:12,], aes(x=T23826PM$Mes[1:12], y=T23826PM$MesTotal[1:12], fill = T23826PM$Mes[1:12])) +
+  geom_bar(stat="identity") +
+  ggtitle("Dosis acumulada del trabajador T23826PM en los años 2010-2019 distribuida por mes [mSv]")+
+  ylim(0,3) +
+  theme_minimal() +
+  theme(
+    axis.title = element_blank(),
+    axis.text=element_text(size=8),
+    legend.title = element_blank(),
+    legend.text= element_text(size=8),
+    plot.caption = element_text(hjust = 0)
+  ) +
+  coord_polar(start = 0)+
+  geom_text(aes(label=T23826PM$MesTotal[1:12]), position=position_dodge(width=0.5), vjust=0)
+
+# Trabajador T23819SR
+ggplot(T23819SR[1:12,], aes(x=T23819SR$Mes[1:12], y=T23819SR$MesTotal[1:12], fill = T23819SR$Mes[1:12])) +
+  geom_bar(stat="identity") +
+  ggtitle("Dosis acumulada del trabajador T23819SR en los años 2010-2019 distribuida por mes [mSv]")+
+  ylim(0,3) +
+  theme_minimal() +
+  theme(
+    axis.title = element_blank(),
+    axis.text=element_text(size=8),
+    legend.title = element_blank(),
+    legend.text= element_text(size=8),
+    plot.caption = element_text(hjust = 0)
+  ) +
+  coord_polar(start = 0)+
+  geom_text(aes(label=T23819SR$MesTotal[1:12]), position=position_dodge(width=0.5), vjust=0)
+#-----------------------------------------------------------------------------------------------------------
 
 
 
