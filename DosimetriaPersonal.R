@@ -91,6 +91,7 @@ Limpieza <- function(x){
   x[x == "*"] <- 0
   x[x == "---"] <- 0 
   x[x == "***"] <- 0
+  x[x == "NEC"] <- 0
   x[x == "M"] <- 0.2
   return(x)
 }
@@ -187,10 +188,10 @@ T23819SR <- FilasFactor(T23819SR)
 
 # Trabajador I23822CR
 I23822CR <- Trabajador(2,2) 
-T23801EE <- NombreColumnas(T23801EE)
-T23801EE <- Limpieza(T23801EE)
-T23801EE <- TotalFilaColumna(T23801EE)
-T23801EE <- FilasFactor(T23801EE)
+I23822CR <- NombreColumnas(I23822CR)
+I23822CR <- Limpieza(I23822CR)
+I23822CR <- TotalFilaColumna(I23822CR)
+I23822CR <- FilasFactor(I23822CR)
 #------------------------------------------------------------------------------------------
 
 
@@ -326,6 +327,23 @@ ggplot(T23819SR[1:12,], aes(x=T23819SR$Mes[1:12], y=T23819SR$MesTotal[1:12], fil
   geom_text(aes(label=T23819SR$MesTotal[1:12]), position=position_dodge(width=0.5), vjust=0)
 #-----------------------------------------------------------------------------------------------------------
 
+#-----------------------------------------------------------------------------------------------------------
+# INGENIERO
 
-
+# Trabajador I23822CR
+ggplot(I23822CR[1:12,], aes(x=I23822CR$Mes[1:12], y=I23822CR$MesTotal[1:12], fill = I23822CR$Mes[1:12])) +
+  geom_bar(stat="identity") +
+  ggtitle("Dosis acumulada del trabajador I23822CR en los años 2010-2019 distribuida por mes [mSv]")+
+  ylim(0,3) +
+  theme_minimal() +
+  theme(
+    axis.title = element_blank(),
+    axis.text=element_text(size=8),
+    legend.title = element_blank(),
+    legend.text= element_text(size=8),
+    plot.caption = element_text(hjust = 0)
+  ) +
+  coord_polar(start = 0)+
+  geom_text(aes(label=I23822CR$MesTotal[1:12]), position=position_dodge(width=0.5), vjust=0)
+#-----------------------------------------------------------------------------------------------------------
                 
