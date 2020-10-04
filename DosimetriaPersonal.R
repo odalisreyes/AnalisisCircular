@@ -77,11 +77,15 @@ Trabajador <- function(num1,num2){
 NombreColumnas <- function(x){
   # se eliminan las primeras 3 filas (código, nombre, apellido)
   x <- x[c(4:16),]
-  for (i in 1:10){
-    num = i-1
+  # se guarda la cantidad de columnas en la variable col
+  col <- length(x)
+  for (i in col:1){
+    num = 10-i
     # se agrega el año como nombre de la columna
     names(x)[i] <- paste0('201',num)
   }
+  # reordena el orden de las columas de menor a mayor
+  x = x[,order(ncol(x):1)]
   return(x)
 }
 
@@ -138,6 +142,13 @@ M23805MO <- NombreColumnas(M23805MO)
 M23805MO <- Limpieza(M23805MO)
 M23805MO <- TotalFilaColumna(M23805MO)
 M23805MO <- FilasFactor(M23805MO)
+
+# Trabajador M23832MC
+M23832MC <- Trabajador(3,2) 
+M23832MC <- NombreColumnas(M23832MC)
+M23832MC <- Limpieza(M23832MC)
+M23832MC <- TotalFilaColumna(M23832MC)
+M23832MC <- FilasFactor(M23832MC)
 #------------------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------------------
