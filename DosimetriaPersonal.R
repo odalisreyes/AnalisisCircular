@@ -77,15 +77,14 @@ Trabajador <- function(num1,num2){
 NombreColumnas <- function(x){
   # se eliminan las primeras 3 filas (código, nombre, apellido)
   x <- x[c(4:16),]
-  # se guarda la cantidad de columnas en la variable col
-  col <- length(x)
-  for (i in col:1){
-    num = 10-i
+  for (i in 1:length(x)){
     # se agrega el año como nombre de la columna
-    names(x)[i] <- paste0('201',num)
+    names(x)[i] <- paste0('201',abs(10-i))
   }
+  # convierte el nombre de las columnas a variables numéricas
+  cnames <- sapply(colnames(x), as.numeric)
   # reordena el orden de las columas de menor a mayor
-  x = x[,order(ncol(x):1)]
+  colnames(x) <- sort(cnames)
   return(x)
 }
 
@@ -130,7 +129,7 @@ FilasFactor <- function(x){
 # MEDICOS = 2
 
 # Trabajador M23803LU
-M23803LU <- Trabajador(0,3) 
+M23803LU <- Trabajador(0,3)  
 M23803LU <- NombreColumnas(M23803LU)
 M23803LU <- Limpieza(M23803LU)
 M23803LU <- TotalFilaColumna(M23803LU)
