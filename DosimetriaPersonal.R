@@ -356,4 +356,36 @@ ggplot(I23822CR[1:12,], aes(x=I23822CR$Mes[1:12], y=I23822CR$MesTotal[1:12], fil
   coord_polar(start = 0)+
   geom_text(aes(label=I23822CR$MesTotal[1:12]), position=position_dodge(width=0.5), vjust=0)
 #-----------------------------------------------------------------------------------------------------------
-                
+
+
+#------------------------------
+# Estadística circular
+#------------------------------
+
+#------------------------------------------------------------------------------------------
+# MEDICOS
+
+# Trabajador M23803LU
+# se convierten a datos circulares
+cM03LU <- circular(M23803LU[13,7:11], units='degrees', zero=circular(0), rotation='counter')
+# se convierte a un vector columna
+cM03LU <- as.data.frame(t(cM03LU)); colnames(cM03LU) <- '2015-2019'
+# los elementos se convierten a variables numéricas
+cM03LU <- sapply(cM03LU, as.numeric)
+
+mean(cM03LU) # dirección media = 1.828
+rho.circular(cM03LU) # media de la longitud resultante = 0.9452089
+(1-rho.circular(cM03LU)) # varianza = 0.05479111
+sd.circular(cM03LU) # desviación = 0.3357062
+
+#-#-#-#-#-#
+# Trabajador M23805MO
+cM05MO <- circular(M23805MO[13,7:11], units='degrees', zero=circular(0), rotation='counter')
+cM05MO <- as.data.frame(t(cM05MO)); colnames(cM05MO) <- '2015-2019'
+cM05MO <- sapply(cM05MO, as.numeric)
+
+mean(cM05MO) # dirección media = 1.872
+rho.circular(cM05MO) # media de la longitud resultante = 0.9900009
+(1-rho.circular(cM05MO)) # varianza = 0.009999146
+sd.circular(cM05MO) # desviación = 0.1417708 
+#------------------------------------------------------------------------------------------
