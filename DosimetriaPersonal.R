@@ -5,7 +5,7 @@
 ## Autora:                                              ##
 ##          Elvia Odalis Reyes Guevara                  ## 
 ## Fecha:                                               ##
-##          Septiembre 2020                             ##
+##          Octubre 2020                                ##
 ##########################################################
 
 
@@ -128,80 +128,66 @@ FilasFactor <- function(x){
 #------------------------------------------------------------------------------------------
 # MEDICOS = 2
 
-# Trabajador M23803LU
-M23803LU <- Trabajador(0,3)  
-M23803LU <- NombreColumnas(M23803LU)
-M23803LU <- Limpieza(M23803LU)
-M23803LU <- TotalFilaColumna(M23803LU)
-M23803LU <- FilasFactor(M23803LU)
+# Trabajador M03LU
+M03LU <- Trabajador(0,3)  
+M03LU <- NombreColumnas(M03LU)
+M03LU <- Limpieza(M03LU)
+M03LU <- TotalFilaColumna(M03LU)
+M03LU <- FilasFactor(M03LU)
 
-# Trabajador M23805MO
-M23805MO <- Trabajador(0,5) 
-M23805MO <- NombreColumnas(M23805MO)
-M23805MO <- Limpieza(M23805MO)
-M23805MO <- TotalFilaColumna(M23805MO)
-M23805MO <- FilasFactor(M23805MO)
-
-# Trabajador M23832MC
-M23832MC <- Trabajador(3,2) 
-M23832MC <- NombreColumnas(M23832MC)
-M23832MC <- Limpieza(M23832MC)
-M23832MC <- TotalFilaColumna(M23832MC)
-M23832MC <- FilasFactor(M23832MC)
+# Trabajador M05MO
+M05MO <- Trabajador(0,5) 
+M05MO <- NombreColumnas(M05MO)
+M05MO <- Limpieza(M05MO)
+M05MO <- TotalFilaColumna(M05MO)
+M05MO <- FilasFactor(M05MO)
 #------------------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------------------
 # FISICOS MEDICOS = 2
 
-# Trabajador F23804EH
-F23804EH <- Trabajador(0,4)
-F23804EH <- NombreColumnas(F23804EH)
-F23804EH <- Limpieza(F23804EH)
-F23804EH <- TotalFilaColumna(F23804EH)
-F23804EH <- FilasFactor(F23804EH)
+# Trabajador F04EH
+F04EH <- Trabajador(0,4)
+F04EH <- NombreColumnas(F04EH)
+F04EH <- Limpieza(F04EH)
+F04EH <- TotalFilaColumna(F04EH)
+F04EH <- FilasFactor(F04EH)
 
-# Trabajador F23810LD
-F23810LD <- Trabajador(1,0) 
-F23810LD <- NombreColumnas(F23810LD)
-F23810LD <- Limpieza(F23810LD)
-F23810LD <- TotalFilaColumna(F23810LD)
-F23810LD <- FilasFactor(F23810LD)
+# Trabajador F10LD
+F10LD <- Trabajador(1,0) 
+F10LD <- NombreColumnas(F10LD)
+F10LD <- Limpieza(F10LD)
+F10LD <- TotalFilaColumna(F10LD)
+F10LD <- FilasFactor(F10LD)
 #------------------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------------------
-# TECNICOS = 3
+# TECNICOS = 2
 
-# Trabajador T23801EE
-T23801EE <- Trabajador(0,1) 
-T23801EE <- NombreColumnas(T23801EE)
-T23801EE <- Limpieza(T23801EE)
-T23801EE <- TotalFilaColumna(T23801EE)
-T23801EE <- FilasFactor(T23801EE)
+# Trabajador T01EE
+T01EE <- Trabajador(0,1) 
+T01EE <- NombreColumnas(T01EE)
+T01EE <- Limpieza(T01EE)
+T01EE <- TotalFilaColumna(T01EE)
+T01EE <- FilasFactor(T01EE)
 
-# Trabajador T23826PM
-T23826PM <- Trabajador(2,6) 
-T23826PM <- NombreColumnas(T23826PM)
-T23826PM <- Limpieza(T23826PM)
-T23826PM <- TotalFilaColumna(T23826PM)
-T23826PM <- FilasFactor(T23826PM)
-
-# Trabajador T23819SR
-T23819SR <- Trabajador(1,9) 
-T23819SR <- NombreColumnas(T23819SR)
-T23819SR <- Limpieza(T23819SR)
-T23819SR <- TotalFilaColumna(T23819SR)
-T23819SR <- FilasFactor(T23819SR)
+# Trabajador T26PM
+T26PM <- Trabajador(2,6) 
+T26PM <- NombreColumnas(T26PM)
+T26PM <- Limpieza(T26PM)
+T26PM <- TotalFilaColumna(T26PM)
+T26PM <- FilasFactor(T26PM)
 #------------------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------------------
 # INGENIEROS = 1
 
-# Trabajador I23822CR
-I23822CR <- Trabajador(2,2) 
-I23822CR <- NombreColumnas(I23822CR)
-I23822CR <- Limpieza(I23822CR)
-I23822CR <- TotalFilaColumna(I23822CR)
-I23822CR <- FilasFactor(I23822CR)
+# Trabajador I22CR
+I22CR <- Trabajador(2,2) 
+I22CR <- NombreColumnas(I22CR)
+I22CR <- Limpieza(I22CR)
+I22CR <- TotalFilaColumna(I22CR)
+I22CR <- FilasFactor(I22CR)
 #------------------------------------------------------------------------------------------
 
 
@@ -213,10 +199,10 @@ I23822CR <- FilasFactor(I23822CR)
 #-----------------------------------------------------------------------------------------------------------
 # MEDICOS
 
-# Trabajador M23803LU
-ggplot(M23803LU[1:12,], aes(x=M23803LU$Mes[1:12], y=M23803LU$MesTotal[1:12], fill = M23803LU$Mes[1:12])) +
+# Trabajador M03LU
+ggplot(M03LU[1:12,], aes(x=M03LU$Mes[1:12], y=M03LU$MesTotal[1:12], fill = M03LU$Mes[1:12])) +
   geom_bar(stat="identity") +
-  ggtitle("Dosis acumulada del trabajador M23803LU en los años 2010-2019 distribuida por mes [mSv]")+
+  ggtitle("Dosis acumulada del trabajador M03LU en los años 2010-2019 [mSv]")+
   ylim(0,3) +
   theme_minimal() +
   theme(
@@ -227,13 +213,13 @@ ggplot(M23803LU[1:12,], aes(x=M23803LU$Mes[1:12], y=M23803LU$MesTotal[1:12], fil
     plot.caption = element_text(hjust = 0)
   ) +
   coord_polar(start = 0)+
-  geom_text(aes(label=M23803LU$MesTotal[1:12]), position=position_dodge(width=0.5), vjust=0)
+  geom_text(aes(label=M03LU$MesTotal[1:12]), position=position_dodge(width=0.5), vjust=0)
 
 
-# Trabajador M23805MO
-ggplot(M23805MO[1:12,], aes(x=M23805MO$Mes[1:12], y=M23805MO$MesTotal[1:12], fill = M23805MO$Mes[1:12])) +
+# Trabajador M05MO
+ggplot(M05MO[1:12,], aes(x=M05MO$Mes[1:12], y=M05MO$MesTotal[1:12], fill = M05MO$Mes[1:12])) +
   geom_bar(stat="identity") +
-  ggtitle("Dosis acumulada del trabajador M23805MO en los años 2010-2019 distribuida por mes [mSv]")+
+  ggtitle("Dosis acumulada del trabajador M05MO en los años 2010-2019 [mSv]")+
   ylim(0,3) +
   theme_minimal() +
   theme(
@@ -244,16 +230,16 @@ ggplot(M23805MO[1:12,], aes(x=M23805MO$Mes[1:12], y=M23805MO$MesTotal[1:12], fil
     plot.caption = element_text(hjust = 0)
   ) +
   coord_polar(start = 0)+
-  geom_text(aes(label=M23805MO$MesTotal[1:12]), position=position_dodge(width=0.5), vjust=0)
+  geom_text(aes(label=M05MO$MesTotal[1:12]), position=position_dodge(width=0.5), vjust=0)
 #-----------------------------------------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------------------------------------
 # FISICOS MEDICOS
 
-# Trabajador F23804EH
-ggplot(F23804EH[1:12,], aes(x=F23804EH$Mes[1:12], y=F23804EH$MesTotal[1:12], fill = F23804EH$Mes[1:12])) +
+# Trabajador F04EH
+ggplot(F04EH[1:12,], aes(x=F04EH$Mes[1:12], y=F04EH$MesTotal[1:12], fill = F04EH$Mes[1:12])) +
   geom_bar(stat="identity") +
-  ggtitle("Dosis acumulada del trabajador F23804EH en los años 2010-2019 distribuida por mes [mSv]")+
+  ggtitle("Dosis acumulada del trabajador F04EH en los años 2010-2019 [mSv]")+
   ylim(0,3) +
   theme_minimal() +
   theme(
@@ -264,13 +250,13 @@ ggplot(F23804EH[1:12,], aes(x=F23804EH$Mes[1:12], y=F23804EH$MesTotal[1:12], fil
     plot.caption = element_text(hjust = 0)
   ) +
   coord_polar(start = 0)+
-  geom_text(aes(label=F23804EH$MesTotal[1:12]), position=position_dodge(width=0.5), vjust=0)
+  geom_text(aes(label=F04EH$MesTotal[1:12]), position=position_dodge(width=0.5), vjust=0)
 
 
-# Trabajador F23810LD
-ggplot(F23810LD[1:12,], aes(x=F23810LD$Mes[1:12], y=F23810LD$MesTotal[1:12], fill = F23810LD$Mes[1:12])) +
+# Trabajador F10LD
+ggplot(F10LD[1:12,], aes(x=F10LD$Mes[1:12], y=F10LD$MesTotal[1:12], fill = F10LD$Mes[1:12])) +
   geom_bar(stat="identity") +
-  ggtitle("Dosis acumulada del trabajador F23810LD en los años 2010-2019 distribuida por mes [mSv]")+
+  ggtitle("Dosis acumulada del trabajador F10LD en los años 2010-2019 [mSv]")+
   ylim(0,3) +
   theme_minimal() +
   theme(
@@ -281,16 +267,16 @@ ggplot(F23810LD[1:12,], aes(x=F23810LD$Mes[1:12], y=F23810LD$MesTotal[1:12], fil
     plot.caption = element_text(hjust = 0)
   ) +
   coord_polar(start = 0)+
-  geom_text(aes(label=F23810LD$MesTotal[1:12]), position=position_dodge(width=0.5), vjust=0)
+  geom_text(aes(label=F10LD$MesTotal[1:12]), position=position_dodge(width=0.5), vjust=0)
 #-----------------------------------------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------------------------------------
 # TECNICOS
 
-# Trabajador T23801EE
-ggplot(T23801EE[1:12,], aes(x=T23801EE$Mes[1:12], y=T23801EE$MesTotal[1:12], fill = T23801EE$Mes[1:12])) +
+# Trabajador T01EE
+ggplot(T01EE[1:12,], aes(x=T01EE$Mes[1:12], y=T01EE$MesTotal[1:12], fill = T01EE$Mes[1:12])) +
   geom_bar(stat="identity") +
-  ggtitle("Dosis acumulada del trabajador T23801EE en los años 2010-2019 distribuida por mes [mSv]")+
+  ggtitle("Dosis acumulada del trabajador T01EE en los años 2010-2019 [mSv]")+
   ylim(0,3) +
   theme_minimal() +
   theme(
@@ -301,13 +287,13 @@ ggplot(T23801EE[1:12,], aes(x=T23801EE$Mes[1:12], y=T23801EE$MesTotal[1:12], fil
     plot.caption = element_text(hjust = 0)
   ) +
   coord_polar(start = 0)+
-  geom_text(aes(label=T23801EE$MesTotal[1:12]), position=position_dodge(width=0.5), vjust=0)
+  geom_text(aes(label=T01EE$MesTotal[1:12]), position=position_dodge(width=0.5), vjust=0)
 
 
-# Trabajador T23826PM
-ggplot(T23826PM[1:12,], aes(x=T23826PM$Mes[1:12], y=T23826PM$MesTotal[1:12], fill = T23826PM$Mes[1:12])) +
+# Trabajador T26PM
+ggplot(T26PM[1:12,], aes(x=T26PM$Mes[1:12], y=T26PM$MesTotal[1:12], fill = T26PM$Mes[1:12])) +
   geom_bar(stat="identity") +
-  ggtitle("Dosis acumulada del trabajador T23826PM en los años 2010-2019 distribuida por mes [mSv]")+
+  ggtitle("Dosis acumulada del trabajador T26PM en los años 2010-2019 [mSv]")+
   ylim(0,3) +
   theme_minimal() +
   theme(
@@ -318,32 +304,16 @@ ggplot(T23826PM[1:12,], aes(x=T23826PM$Mes[1:12], y=T23826PM$MesTotal[1:12], fil
     plot.caption = element_text(hjust = 0)
   ) +
   coord_polar(start = 0)+
-  geom_text(aes(label=T23826PM$MesTotal[1:12]), position=position_dodge(width=0.5), vjust=0)
-
-# Trabajador T23819SR
-ggplot(T23819SR[1:12,], aes(x=T23819SR$Mes[1:12], y=T23819SR$MesTotal[1:12], fill = T23819SR$Mes[1:12])) +
-  geom_bar(stat="identity") +
-  ggtitle("Dosis acumulada del trabajador T23819SR en los años 2010-2019 distribuida por mes [mSv]")+
-  ylim(0,3) +
-  theme_minimal() +
-  theme(
-    axis.title = element_blank(),
-    axis.text=element_text(size=8),
-    legend.title = element_blank(),
-    legend.text= element_text(size=8),
-    plot.caption = element_text(hjust = 0)
-  ) +
-  coord_polar(start = 0)+
-  geom_text(aes(label=T23819SR$MesTotal[1:12]), position=position_dodge(width=0.5), vjust=0)
+  geom_text(aes(label=T26PM$MesTotal[1:12]), position=position_dodge(width=0.5), vjust=0)
 #-----------------------------------------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------------------------------------
 # INGENIERO
 
-# Trabajador I23822CR
-ggplot(I23822CR[1:12,], aes(x=I23822CR$Mes[1:12], y=I23822CR$MesTotal[1:12], fill = I23822CR$Mes[1:12])) +
+# Trabajador I22CR
+ggplot(I22CR[1:12,], aes(x=I22CR$Mes[1:12], y=I22CR$MesTotal[1:12], fill = I22CR$Mes[1:12])) +
   geom_bar(stat="identity") +
-  ggtitle("Dosis acumulada del trabajador I23822CR en los años 2010-2019 distribuida por mes [mSv]")+
+  ggtitle("Dosis acumulada del trabajador I22CR en los años 2010-2019 [mSv]")+
   ylim(0,3) +
   theme_minimal() +
   theme(
@@ -354,15 +324,19 @@ ggplot(I23822CR[1:12,], aes(x=I23822CR$Mes[1:12], y=I23822CR$MesTotal[1:12], fil
     plot.caption = element_text(hjust = 0)
   ) +
   coord_polar(start = 0)+
-  geom_text(aes(label=I23822CR$MesTotal[1:12]), position=position_dodge(width=0.5), vjust=0)
+  geom_text(aes(label=I22CR$MesTotal[1:12]), position=position_dodge(width=0.5), vjust=0)
 #-----------------------------------------------------------------------------------------------------------
+
 
 
 #------------------------------
 # Estadística circular
 #------------------------------
 
-#------------------------------------------------------------------------------------------
+#-----------
+# MENSUAL
+#------------
+#-----------------------------------------------------------------------------------------------------------
 # MEDICOS
 
 # Trabajador M23803LU
@@ -388,4 +362,105 @@ mean(cM05MO) # dirección media = 1.872
 rho.circular(cM05MO) # media de la longitud resultante = 0.9900009
 (1-rho.circular(cM05MO)) # varianza = 0.009999146
 sd.circular(cM05MO) # desviación = 0.1417708 
-#------------------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------
+
+
+
+
+#----------
+# ANUAL
+#----------
+#-----------------------------------------------------------------------------------------------------------
+# MEDICOS
+
+# Trabajador M03LU
+# se convierten a datos circulares
+cM03LU <- circular(M23803LU[13,7:11], units='degrees', zero=circular(0), rotation='counter')
+# se convierte a un vector columna
+cM03LU <- as.data.frame(t(cM03LU)); colnames(cM03LU) <- '2015-2019'
+# los elementos se convierten a variables numéricas
+cM03LU <- sapply(cM03LU, as.numeric)
+
+mean(cM03LU) # dirección media = 1.828
+rho.circular(cM03LU) # media de la longitud resultante = 0.9452089
+(1-rho.circular(cM03LU)) # varianza = 0.05479111
+sd.circular(cM03LU) # desviación = 0.3357062
+
+#-#-#-#-#-#
+# Trabajador M05MO
+cM05MO <- circular(M23805MO[13,7:11], units='degrees', zero=circular(0), rotation='counter')
+cM05MO <- as.data.frame(t(cM05MO)); colnames(cM05MO) <- '2015-2019'
+cM05MO <- sapply(cM05MO, as.numeric)
+
+mean(cM05MO) # dirección media = 1.872
+rho.circular(cM05MO) # media de la longitud resultante = 0.9900009
+(1-rho.circular(cM05MO)) # varianza = 0.009999146
+sd.circular(cM05MO) # desviación = 0.1417708 
+#-----------------------------------------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------------------------------------
+# FISICOS MEDICOS
+
+# Trabajador F04EH
+cF04EH <- circular(F04EH[13,7:11], units='degrees', zero=circular(0), rotation='counter')
+cF04EH <- as.data.frame(t(cF04EH)); colnames(cF04EH) <- '2015-2019'
+cF04EH <- sapply(cF04EH, as.numeric)
+
+mean(cF04EH) # dirección media = 1.8474
+rho.circular(cF04EH) # media de la longitud resultante = 0.9749765
+(1-rho.circular(cF04EH)) # varianza = 0.02502346
+sd.circular(cF04EH) # desviación = 0.2251305 
+
+
+# Trabajador F10LD
+cF10LD <- circular(F10LD[13,7:11], units='degrees', zero=circular(0), rotation='counter')
+cF10LD <- as.data.frame(t(cF10LD)); colnames(cF10LD) <- '2015-2019'
+cF10LD <- sapply(cF10LD, as.numeric)
+
+mean(cF10LD) # dirección media = 1.938
+rho.circular(cF10LD) # media de la longitud resultante = 0.9542922
+(1-rho.circular(cF10LD)) # varianza = 0.04570778
+sd.circular(cF10LD) # desviación = 0.3058933
+#-----------------------------------------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------------------------------------
+# TECNICOS
+
+# Trabajador T01EE
+cT01EE <- circular(T01EE[13,7:11], units='degrees', zero=circular(0), rotation='counter')
+cT01EE <- as.data.frame(t(cT01EE)); colnames(cT01EE) <- '2015-2019'
+cT01EE <- sapply(cT01EE, as.numeric)
+
+mean(cT01EE) # dirección media = 1.64
+rho.circular(cT01EE)# media de la longitud resultante = 0.99
+(1-rho.circular(cT01EE)) # varianza = 0.01
+sd.circular(cT01EE) # desviación = 0.1006633
+
+
+# Trabajador T26PM
+cT26PM <- circular(T26PM[13,7:11], units='degrees', zero=circular(0), rotation='counter')
+cT26PM <- as.data.frame(t(cT26PM)); colnames(cT26PM) <- '2015-2019'
+cT26PM <- sapply(cT26PM, as.numeric)
+
+mean(cT26PM) # dirección media = 1.936
+rho.circular(cT26PM) # media de la longitud resultante = 0.965824
+(1-rho.circular(cT26PM)) # varianza = 0.03417596
+sd.circular(cT26PM) # desviación = 0.2637181
+#-----------------------------------------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------------------------------------
+# INGENIERO
+
+# Trabajador I22CR
+cI22CR <- circular(I22CR[13,7:11], units='degrees', zero=circular(0), rotation='counter')
+cI22CR <- as.data.frame(t(cI22CR)); colnames(cI22CR) <- '2015-2019'
+cI22CR <- sapply(cI22CR, as.numeric)
+
+mean(cI22CR) # dirección media =  1.662
+rho.circular(cI22CR) # media de la longitud resultante = 0.9741001
+(1-rho.circular(cI22CR)) # varianza = 0.02589993
+sd.circular(cI22CR) # desviación = 0.2290905
+#-----------------------------------------------------------------------------------------------------------
+
+
+
