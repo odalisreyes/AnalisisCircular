@@ -119,6 +119,48 @@ FilasFactor <- function(x){
   return(x)
 }
 
+# Proposito: Calcular la estadística circular mensual
+# @param: x (dataframe)
+CircularMensual <- function(x){
+  # se convierten los datos a datos circulares
+  cx <- circular(x$MesTotal[1:12], type='angles', units='degrees', template='none', modulo='asis', zero=0, rotation='counter')
+  cx <- as.numeric(cx)
+  cx <- circular(cx)
+  
+  # Estadística Circular
+  media <- mean(cx)
+  longresult <- rho.circular(cx)
+  varianza <- (1-rho.circular(cx))
+  desv <- sd.circular(cx)
+  
+  # se imprimen los resultados
+  print(paste0('- La media circular es: ', round(media,2)))
+  print(paste0('- La longitud del vector medio es: ', round(longresult,2)))
+  print(paste0('- La varianza circular es: ', round(varianza,2)))
+  print(paste0('- La desviación estándar circular es: ', round(desv,2)))
+}
+
+# Proposito: Calcular la estadística circular anual
+# @param: x (dataframe)
+CircularAnual <- function(x){
+  # se convierten los datos a datos circulares
+  cx <- circular(x[13,7:11], type='angles', units='degrees', template='none', modulo='asis', zero=0, rotation='counter')
+  cx <- as.numeric(cx)
+  cx <- circular(cx)
+  
+  # Estadística Circular
+  media <- mean(cx)
+  longresult <- rho.circular(cx)
+  varianza <- (1-rho.circular(cx))
+  desv <- sd.circular(cx)
+  
+  # se imprimen los resultados
+  print(paste0('- La media circular es: ', round(media,2)))
+  print(paste0('- La longitud del vector medio es: ', round(longresult,2)))
+  print(paste0('- La varianza circular es: ', round(varianza,2)))
+  print(paste0('- La desviación estándar circular es: ', round(desv,2)))
+}
+
 
 
 #------------------------------
@@ -333,134 +375,48 @@ ggplot(I22CR[1:12,], aes(x=I22CR$Mes[1:12], y=I22CR$MesTotal[1:12], fill = I22CR
 # Estadística circular
 #------------------------------
 
-#-----------
-# MENSUAL
-#------------
-#-----------------------------------------------------------------------------------------------------------
-# MEDICOS
-
-# Trabajador M23803LU
-# se convierten a datos circulares
-cM03LU <- circular(M23803LU[13,7:11], units='degrees', zero=circular(0), rotation='counter')
-# se convierte a un vector columna
-cM03LU <- as.data.frame(t(cM03LU)); colnames(cM03LU) <- '2015-2019'
-# los elementos se convierten a variables numéricas
-cM03LU <- sapply(cM03LU, as.numeric)
-
-mean(cM03LU) # dirección media = 1.828
-rho.circular(cM03LU) # media de la longitud resultante = 0.9452089
-(1-rho.circular(cM03LU)) # varianza = 0.05479111
-sd.circular(cM03LU) # desviación = 0.3357062
-
-#-#-#-#-#-#
-# Trabajador M23805MO
-cM05MO <- circular(M23805MO[13,7:11], units='degrees', zero=circular(0), rotation='counter')
-cM05MO <- as.data.frame(t(cM05MO)); colnames(cM05MO) <- '2015-2019'
-cM05MO <- sapply(cM05MO, as.numeric)
-
-mean(cM05MO) # dirección media = 1.872
-rho.circular(cM05MO) # media de la longitud resultante = 0.9900009
-(1-rho.circular(cM05MO)) # varianza = 0.009999146
-sd.circular(cM05MO) # desviación = 0.1417708 
-#-----------------------------------------------------------------------------------------------------------
-
-
-
-
-#----------
-# ANUAL
-#----------
 #-----------------------------------------------------------------------------------------------------------
 # MEDICOS
 
 # Trabajador M03LU
-# se convierten a datos circulares
-cM03LU <- circular(M23803LU[13,7:11], units='degrees', zero=circular(0), rotation='counter')
-# se convierte a un vector columna
-cM03LU <- as.data.frame(t(cM03LU)); colnames(cM03LU) <- '2015-2019'
-# los elementos se convierten a variables numéricas
-cM03LU <- sapply(cM03LU, as.numeric)
+CircularMensual(M03LU)
+CircularAnual(M03LU)
 
-mean(cM03LU) # dirección media = 1.828
-rho.circular(cM03LU) # media de la longitud resultante = 0.9452089
-(1-rho.circular(cM03LU)) # varianza = 0.05479111
-sd.circular(cM03LU) # desviación = 0.3357062
-
-#-#-#-#-#-#
 # Trabajador M05MO
-cM05MO <- circular(M23805MO[13,7:11], units='degrees', zero=circular(0), rotation='counter')
-cM05MO <- as.data.frame(t(cM05MO)); colnames(cM05MO) <- '2015-2019'
-cM05MO <- sapply(cM05MO, as.numeric)
-
-mean(cM05MO) # dirección media = 1.872
-rho.circular(cM05MO) # media de la longitud resultante = 0.9900009
-(1-rho.circular(cM05MO)) # varianza = 0.009999146
-sd.circular(cM05MO) # desviación = 0.1417708 
+CircularMensual(M05MO)
+CircularAnual(M05MO)
 #-----------------------------------------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------------------------------------
 # FISICOS MEDICOS
 
 # Trabajador F04EH
-cF04EH <- circular(F04EH[13,7:11], units='degrees', zero=circular(0), rotation='counter')
-cF04EH <- as.data.frame(t(cF04EH)); colnames(cF04EH) <- '2015-2019'
-cF04EH <- sapply(cF04EH, as.numeric)
-
-mean(cF04EH) # dirección media = 1.8474
-rho.circular(cF04EH) # media de la longitud resultante = 0.9749765
-(1-rho.circular(cF04EH)) # varianza = 0.02502346
-sd.circular(cF04EH) # desviación = 0.2251305 
-
+CircularMensual(F04EH)
+CircularAnual(F04EH)
 
 # Trabajador F10LD
-cF10LD <- circular(F10LD[13,7:11], units='degrees', zero=circular(0), rotation='counter')
-cF10LD <- as.data.frame(t(cF10LD)); colnames(cF10LD) <- '2015-2019'
-cF10LD <- sapply(cF10LD, as.numeric)
-
-mean(cF10LD) # dirección media = 1.938
-rho.circular(cF10LD) # media de la longitud resultante = 0.9542922
-(1-rho.circular(cF10LD)) # varianza = 0.04570778
-sd.circular(cF10LD) # desviación = 0.3058933
+CircularMensual(F10LD)
+CircularAnual(F10LD)
 #-----------------------------------------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------------------------------------
 # TECNICOS
 
 # Trabajador T01EE
-cT01EE <- circular(T01EE[13,7:11], units='degrees', zero=circular(0), rotation='counter')
-cT01EE <- as.data.frame(t(cT01EE)); colnames(cT01EE) <- '2015-2019'
-cT01EE <- sapply(cT01EE, as.numeric)
-
-mean(cT01EE) # dirección media = 1.64
-rho.circular(cT01EE)# media de la longitud resultante = 0.99
-(1-rho.circular(cT01EE)) # varianza = 0.01
-sd.circular(cT01EE) # desviación = 0.1006633
-
+CircularMensual(T01EE)
+CircularAnual(T01EE)
 
 # Trabajador T26PM
-cT26PM <- circular(T26PM[13,7:11], units='degrees', zero=circular(0), rotation='counter')
-cT26PM <- as.data.frame(t(cT26PM)); colnames(cT26PM) <- '2015-2019'
-cT26PM <- sapply(cT26PM, as.numeric)
-
-mean(cT26PM) # dirección media = 1.936
-rho.circular(cT26PM) # media de la longitud resultante = 0.965824
-(1-rho.circular(cT26PM)) # varianza = 0.03417596
-sd.circular(cT26PM) # desviación = 0.2637181
+CircularMensual(T26PM)
+CircularAnual(T26PM)
 #-----------------------------------------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------------------------------------
 # INGENIERO
 
 # Trabajador I22CR
-cI22CR <- circular(I22CR[13,7:11], units='degrees', zero=circular(0), rotation='counter')
-cI22CR <- as.data.frame(t(cI22CR)); colnames(cI22CR) <- '2015-2019'
-cI22CR <- sapply(cI22CR, as.numeric)
-
-mean(cI22CR) # dirección media =  1.662
-rho.circular(cI22CR) # media de la longitud resultante = 0.9741001
-(1-rho.circular(cI22CR)) # varianza = 0.02589993
-sd.circular(cI22CR) # desviación = 0.2290905
+CircularMensual(I22CR)
+CircularAnual(I22CR)
 #-----------------------------------------------------------------------------------------------------------
-
 
 
