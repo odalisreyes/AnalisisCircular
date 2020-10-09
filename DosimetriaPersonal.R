@@ -17,6 +17,8 @@ if(!require(circular)) {install.packages("circular")}
 if(!require(tidyverse)) {install.packages("tidyverse")}
 if(!require(dplyr)) {install.packages("dplyr")}
 if(!require(ggplot2)) {install.packages("ggplot2")}
+if(!require(tseries)) {install.packages("tseries")}
+if(!require(dygraphs)) {install.packages("dygraphs")}
 
 #------------------------------
 # Se importan las librerías 
@@ -26,6 +28,9 @@ library("circular") # para hacer estadística circular
 library('tidyverse') 
 library("dplyr")
 library('ggplot2') # para hacer gráficas bonitas
+library('tseries') # series de tiempo 
+library('dygraphs') # grafica interactiva ts
+library('xts') # formato xts
 
 #---------------------
 # Carga de archivos
@@ -122,8 +127,10 @@ FilasFactor <- function(x){
 # Proposito: Calcular la estadística circular mensual
 # @param: x (dataframe)
 CircularMensual <- function(x){
+  # se extraen todos los datos mensuales
+  todo <- data.frame(a=unlist(x[1:12,3:length(x)-1], use.names = FALSE))
   # se convierten los datos a datos circulares
-  cx <- circular(x$MesTotal[1:12], type='angles', units='degrees', template='none', modulo='asis', zero=0, rotation='counter')
+  cx <- circular(todo, type='angles', units='degrees', template='none', modulo='asis', zero=0, rotation='counter')
   cx <- as.numeric(cx)
   cx <- circular(cx)
   
@@ -135,8 +142,8 @@ CircularMensual <- function(x){
   
   # se imprimen los resultados
   print(paste0('- La media circular es: ', round(media,2)))
-  print(paste0('- La longitud del vector medio es: ', round(longresult,2)))
-  print(paste0('- La varianza circular es: ', round(varianza,2)))
+  print(paste0('- La longitud del vector medio es: ', round(longresult,5)))
+  print(paste0('- La varianza circular es: ', round(varianza,5)))
   print(paste0('- La desviación estándar circular es: ', round(desv,2)))
 }
 
@@ -149,17 +156,72 @@ CircularAnual <- function(x){
   cx <- circular(cx)
   
   # Estadística Circular
-  media <- mean(cx)
+  suma <- sum(cx)
   longresult <- rho.circular(cx)
   varianza <- (1-rho.circular(cx))
   desv <- sd.circular(cx)
   
   # se imprimen los resultados
-  print(paste0('- La media circular es: ', round(media,2)))
+  print(paste0('- La dosis acumulada en los últimos años es de: ', round(suma,2)))
   print(paste0('- La longitud del vector medio es: ', round(longresult,2)))
   print(paste0('- La varianza circular es: ', round(varianza,2)))
   print(paste0('- La desviación estándar circular es: ', round(desv,2)))
 }
+
+# Proposito: Realiza una gráfica de barras circular del total de meses 
+# @param: x (dataframe)
+cbarras.plot <- function(df){
+  cplot <- ggplot(df[1:12,], aes(x=df$Mes[1:12], y=df$MesTotal[1:12], fill = df$Mes[1:12])) +
+    geom_bar(stat="identity") +
+    ggtitle("Dosis acumulada del trabajador M03LU en los años 2010-2019 [mSv]")+
+    ylim(0,3) +
+    theme_minimal() +
+    theme(
+      axis.title = element_blank(),
+      axis.text=element_text(size=8),
+      legend.title = element_blank(),
+      legend.text= element_text(size=8),
+      plot.caption = element_text(hjust = 0)
+    ) +
+    coord_polar(start = 0)+
+    geom_text(aes(label=df$MesTotal[1:12]), position=position_dodge(width=0.5), vjust=0)
+  return(cplot)
+}
+
+# Proposito: Graficar una serie de tiempo con su línea de tendencia
+# @param: x (dataframe)
+ts.tendencia <- function(x){
+  # descompone el dataframe y lo une todo como un solo vector
+  df <-data.frame(datos=unlist(x[1:12,3:length(x)-1], use.names = FALSE))
+  # agrega la variable del tiempo, desde 01-2010 hasta 12-2019
+  df$tiempo = seq(as.Date("2010/1/1"), as.Date("2019/12/31"), "month")
+  # grafica la serie de tiempo
+  df.ts <- ggplot(data = df, aes(x = tiempo, y = datos))+ geom_line(color = "#7C96B0", size = 0.5) + 
+    stat_smooth(color = "#E3AB7D", fill = "#B2B2B2", method = 'loess') + # agrega línea suavizada de tendencia
+    xlab("Tiempo") + ylab("Dosis [mSv]")
+  return(df.ts)
+}
+
+# Proposito: Graficar una serie de tiempo interactiva
+# @param: x (dataframe)
+ts.interactive <- function(x){
+  # descompone el dataframe y lo une todo como un solo vector
+  df <-data.frame(datos=unlist(x[1:12,3:length(x)-1], use.names = FALSE))
+  # agrega la variable del tiempo, desde 01-2010 hasta 12-2019
+  df$tiempo = seq(as.Date("2010/1/1"), as.Date("2019/12/31"), "month")
+  # conversión de data frame -> formato xts
+  don <- xts(x = df$datos, order.by = df$tiempo)
+  
+  # grafica la serie de tiempo interactiva
+  p <- dygraph(don) %>%
+    dyOptions(labelsUTC = TRUE, fillGraph=TRUE, fillAlpha=0.1, drawGrid = FALSE, colors="#D8AE5A") %>%
+    dyRangeSelector() %>%
+    dyCrosshair(direction = "vertical") %>%
+    dyHighlight(highlightCircleSize = 5, highlightSeriesBackgroundAlpha = 0.2, hideOnMouseOut = FALSE)  %>%
+    dyRoller(rollPeriod = 1)
+  return(p)
+}
+
 
 
 
@@ -242,131 +304,62 @@ I22CR <- FilasFactor(I22CR)
 # MEDICOS
 
 # Trabajador M03LU
-ggplot(M03LU[1:12,], aes(x=M03LU$Mes[1:12], y=M03LU$MesTotal[1:12], fill = M03LU$Mes[1:12])) +
-  geom_bar(stat="identity") +
-  ggtitle("Dosis acumulada del trabajador M03LU en los años 2010-2019 [mSv]")+
-  ylim(0,3) +
-  theme_minimal() +
-  theme(
-    axis.title = element_blank(),
-    axis.text=element_text(size=8),
-    legend.title = element_blank(),
-    legend.text= element_text(size=8),
-    plot.caption = element_text(hjust = 0)
-  ) +
-  coord_polar(start = 0)+
-  geom_text(aes(label=M03LU$MesTotal[1:12]), position=position_dodge(width=0.5), vjust=0)
+cbarras.plot(M03LU)
+ts.tendencia(M03LU) 
+ts.interactive(M03LU)
+
+# serie de tiempo
+prueba2 <-data.frame(datos=unlist(I22CR[1:12,3:length(I22CR)-1], use.names = FALSE))
+M03LU.ts<-ts(prueba2, start = c(2010,1), end=c(2019,12), frequency = 12)
+plot(M03LU.ts)
+# Descomponiendo la serie de diesel
+M03LU.ts.desc <- decompose(M03LU.ts)
+plot(M03LU.ts.desc)
+
+prueba$tiempo = seq(as.Date("2010/1/1"), as.Date("2019/12/31"), "month")
 
 
 # Trabajador M05MO
-ggplot(M05MO[1:12,], aes(x=M05MO$Mes[1:12], y=M05MO$MesTotal[1:12], fill = M05MO$Mes[1:12])) +
-  geom_bar(stat="identity") +
-  ggtitle("Dosis acumulada del trabajador M05MO en los años 2010-2019 [mSv]")+
-  ylim(0,3) +
-  theme_minimal() +
-  theme(
-    axis.title = element_blank(),
-    axis.text=element_text(size=8),
-    legend.title = element_blank(),
-    legend.text= element_text(size=8),
-    plot.caption = element_text(hjust = 0)
-  ) +
-  coord_polar(start = 0)+
-  geom_text(aes(label=M05MO$MesTotal[1:12]), position=position_dodge(width=0.5), vjust=0)
+cbarras.plot(M05MO)
+ts.tendencia(M05MO)
+ts.interactive(M05MO)
 #-----------------------------------------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------------------------------------
 # FISICOS MEDICOS
 
 # Trabajador F04EH
-ggplot(F04EH[1:12,], aes(x=F04EH$Mes[1:12], y=F04EH$MesTotal[1:12], fill = F04EH$Mes[1:12])) +
-  geom_bar(stat="identity") +
-  ggtitle("Dosis acumulada del trabajador F04EH en los años 2010-2019 [mSv]")+
-  ylim(0,3) +
-  theme_minimal() +
-  theme(
-    axis.title = element_blank(),
-    axis.text=element_text(size=8),
-    legend.title = element_blank(),
-    legend.text= element_text(size=8),
-    plot.caption = element_text(hjust = 0)
-  ) +
-  coord_polar(start = 0)+
-  geom_text(aes(label=F04EH$MesTotal[1:12]), position=position_dodge(width=0.5), vjust=0)
-
+cbarras.plot(F04EH)
+ts.tendencia(F04EH)
+ts.interactive(F04EH)
 
 # Trabajador F10LD
-ggplot(F10LD[1:12,], aes(x=F10LD$Mes[1:12], y=F10LD$MesTotal[1:12], fill = F10LD$Mes[1:12])) +
-  geom_bar(stat="identity") +
-  ggtitle("Dosis acumulada del trabajador F10LD en los años 2010-2019 [mSv]")+
-  ylim(0,3) +
-  theme_minimal() +
-  theme(
-    axis.title = element_blank(),
-    axis.text=element_text(size=8),
-    legend.title = element_blank(),
-    legend.text= element_text(size=8),
-    plot.caption = element_text(hjust = 0)
-  ) +
-  coord_polar(start = 0)+
-  geom_text(aes(label=F10LD$MesTotal[1:12]), position=position_dodge(width=0.5), vjust=0)
+cbarras.plot(F10LD)
+ts.tendencia(F10LD)
+ts.interactive(F10LD)
 #-----------------------------------------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------------------------------------
 # TECNICOS
 
 # Trabajador T01EE
-ggplot(T01EE[1:12,], aes(x=T01EE$Mes[1:12], y=T01EE$MesTotal[1:12], fill = T01EE$Mes[1:12])) +
-  geom_bar(stat="identity") +
-  ggtitle("Dosis acumulada del trabajador T01EE en los años 2010-2019 [mSv]")+
-  ylim(0,3) +
-  theme_minimal() +
-  theme(
-    axis.title = element_blank(),
-    axis.text=element_text(size=8),
-    legend.title = element_blank(),
-    legend.text= element_text(size=8),
-    plot.caption = element_text(hjust = 0)
-  ) +
-  coord_polar(start = 0)+
-  geom_text(aes(label=T01EE$MesTotal[1:12]), position=position_dodge(width=0.5), vjust=0)
-
+cbarras.plot(T01EE)
+ts.tendencia(T01EE)
+ts.interactive(T01EE)
 
 # Trabajador T26PM
-ggplot(T26PM[1:12,], aes(x=T26PM$Mes[1:12], y=T26PM$MesTotal[1:12], fill = T26PM$Mes[1:12])) +
-  geom_bar(stat="identity") +
-  ggtitle("Dosis acumulada del trabajador T26PM en los años 2010-2019 [mSv]")+
-  ylim(0,3) +
-  theme_minimal() +
-  theme(
-    axis.title = element_blank(),
-    axis.text=element_text(size=8),
-    legend.title = element_blank(),
-    legend.text= element_text(size=8),
-    plot.caption = element_text(hjust = 0)
-  ) +
-  coord_polar(start = 0)+
-  geom_text(aes(label=T26PM$MesTotal[1:12]), position=position_dodge(width=0.5), vjust=0)
+cbarras.plot(T26PM)
+ts.tendencia(T26PM)
+ts.interactive(T26PM)
 #-----------------------------------------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------------------------------------
 # INGENIERO
 
 # Trabajador I22CR
-ggplot(I22CR[1:12,], aes(x=I22CR$Mes[1:12], y=I22CR$MesTotal[1:12], fill = I22CR$Mes[1:12])) +
-  geom_bar(stat="identity") +
-  ggtitle("Dosis acumulada del trabajador I22CR en los años 2010-2019 [mSv]")+
-  ylim(0,3) +
-  theme_minimal() +
-  theme(
-    axis.title = element_blank(),
-    axis.text=element_text(size=8),
-    legend.title = element_blank(),
-    legend.text= element_text(size=8),
-    plot.caption = element_text(hjust = 0)
-  ) +
-  coord_polar(start = 0)+
-  geom_text(aes(label=I22CR$MesTotal[1:12]), position=position_dodge(width=0.5), vjust=0)
+cbarras.plot(I22CR)
+ts.tendencia(I22CR)
+ts.interactive(I22CR)
 #-----------------------------------------------------------------------------------------------------------
 
 
@@ -415,8 +408,14 @@ CircularAnual(T26PM)
 # INGENIERO
 
 # Trabajador I22CR
-CircularMensual(I22CR)
+CircularMensual(I22CR) # media =1.61, R=0.98, V=0.02, Desv=0.2
+# nueva funcion = 0.16, 1, 0, 0.06
 CircularAnual(I22CR)
 #-----------------------------------------------------------------------------------------------------------
+
+prueba <-data.frame(a=unlist(I22CR[1:12,3:length(I22CR)-1], use.names = FALSE))
+
+
+
 
 
