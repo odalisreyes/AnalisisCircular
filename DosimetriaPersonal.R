@@ -31,6 +31,7 @@ library('ggplot2') # para hacer gráficas bonitas
 library('tseries') # series de tiempo 
 library('dygraphs') # grafica interactiva ts
 library('xts') # formato xts
+library('plotly')
 
 #---------------------
 # Carga de archivos
@@ -196,8 +197,8 @@ ts.tendencia <- function(x){
   # agrega la variable del tiempo, desde 01-2010 hasta 12-2019
   df$tiempo = seq(as.Date("2010/1/1"), as.Date("2019/12/31"), "month")
   # grafica la serie de tiempo
-  df.ts <- ggplot(data = df, aes(x = tiempo, y = datos))+ geom_line(color = "#7C96B0", size = 0.5) + 
-    stat_smooth(color = "#E3AB7D", fill = "#B2B2B2", method = 'loess') + # agrega línea suavizada de tendencia
+  df.ts <- ggplot(data = df, aes(x = tiempo, y = datos))+ geom_line(size = 0.5) + 
+    stat_smooth(method = 'loess') + # agrega línea suavizada de tendencia
     xlab("Tiempo") + ylab("Dosis [mSv]")
   return(df.ts)
 }
@@ -214,6 +215,8 @@ ts.interactive <- function(x){
   
   # grafica la serie de tiempo interactiva
   p <- dygraph(don) %>%
+    dySeries("V1", label = "Dosis (mSv)") %>%
+    dyLegend(show = "always", hideOnMouseOut = FALSE)%>%
     dyOptions(labelsUTC = TRUE, fillGraph=TRUE, fillAlpha=0.1, drawGrid = FALSE, colors="#D8AE5A") %>%
     dyRangeSelector() %>%
     dyCrosshair(direction = "vertical") %>%
@@ -222,6 +225,23 @@ ts.interactive <- function(x){
   return(p)
 }
 
+# Proposito: Graficar la parte seasonal de la serie de timepo
+# @param: x (dataframe)
+ts.season <- function(x){
+  # descompone el dataframe y lo une todo como un solo vector
+  df <-data.frame(datos=unlist(x[1:12,3:length(x)-1], use.names = FALSE))
+  # convierte los datos a una serie de tiempo
+  df.ts <-ts(df, start = c(2010,1), end=c(2019,12), frequency = 12)
+  # descompone la serie de tiempo
+  df.ts.desc <- decompose(df.ts)
+  vec <- data.frame(datos=sapply(df.ts.desc$seasonal, as.numeric))
+  vec$tiempo = seq(as.Date("2010/1/1"), as.Date("2019/12/31"), "month")
+  # se grafica solamente la parte seasonal
+  season.df <- ggplot(data = vec, aes(x = tiempo, y = datos))+ geom_line(size = 0.2)+
+    xlab('Tiempo') + ylab('Dosis [mSv]')
+  season.df <- ggplotly(season.df)
+  return(season.df)
+}
 
 
 
@@ -305,24 +325,15 @@ I22CR <- FilasFactor(I22CR)
 
 # Trabajador M03LU
 cbarras.plot(M03LU)
-ts.tendencia(M03LU) 
+#ts.tendencia(M03LU) 
 ts.interactive(M03LU)
-
-# serie de tiempo
-prueba2 <-data.frame(datos=unlist(I22CR[1:12,3:length(I22CR)-1], use.names = FALSE))
-M03LU.ts<-ts(prueba2, start = c(2010,1), end=c(2019,12), frequency = 12)
-plot(M03LU.ts)
-# Descomponiendo la serie de diesel
-M03LU.ts.desc <- decompose(M03LU.ts)
-plot(M03LU.ts.desc)
-
-prueba$tiempo = seq(as.Date("2010/1/1"), as.Date("2019/12/31"), "month")
-
+ts.season(M03LU)
 
 # Trabajador M05MO
 cbarras.plot(M05MO)
-ts.tendencia(M05MO)
+#ts.tendencia(M05MO)
 ts.interactive(M05MO)
+ts.season(M05MO)
 #-----------------------------------------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------------------------------------
@@ -330,8 +341,8 @@ ts.interactive(M05MO)
 
 # Trabajador F04EH
 cbarras.plot(F04EH)
-ts.tendencia(F04EH)
 ts.interactive(F04EH)
+ts.season(F04EH)
 
 # Trabajador F10LD
 cbarras.plot(F10LD)
