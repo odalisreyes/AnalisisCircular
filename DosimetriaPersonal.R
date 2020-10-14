@@ -31,7 +31,8 @@ library('ggplot2') # para hacer gráficas bonitas
 library('tseries') # series de tiempo 
 library('dygraphs') # grafica interactiva ts
 library('xts') # formato xts
-library('plotly')
+library('plotly') # gráfica interactiva
+library("ggpubr") # easy ggplot2-based data visualization
 
 #---------------------
 # Carga de archivos
@@ -83,6 +84,8 @@ Trabajador <- function(num1,num2){
 NombreColumnas <- function(x){
   # se eliminan las primeras 3 filas (código, nombre, apellido)
   x <- x[c(4:16),]
+  # se elimina la fila del total de excel 
+  x <- x[-c(13), ]
   for (i in 1:length(x)){
     # se agrega el año como nombre de la columna
     names(x)[i] <- paste0('201',abs(10-i))
@@ -108,8 +111,6 @@ Limpieza <- function(x){
 # Proposito: Obtener los totales de los datos fila y datos columna
 # @param: x (dataframe)
 TotalFilaColumna <- function(x){
-  # primero se elimina la fila del total de excel 
-  x <- x[-c(13), ]
   x['TOTAL',] <- colSums(sapply(x, as.numeric)) # suma de columnas
   x$MesTotal <- rowSums(sapply(x, as.numeric)) # suma de filas
   return(x)
@@ -127,9 +128,9 @@ FilasFactor <- function(x){
 
 # Proposito: Calcular la estadística circular mensual
 # @param: x (dataframe)
-CircularMensual <- function(x){
+CircularMensual <- function(x,inicio,fin){
   # se extraen todos los datos mensuales
-  todo <- data.frame(a=unlist(x[1:12,3:length(x)-1], use.names = FALSE))
+  todo <- data.frame(a=unlist(x[1:12,inicio:fin], use.names = FALSE))
   # se convierten los datos a datos circulares
   cx <- circular(todo, type='angles', units='degrees', template='none', modulo='asis', zero=0, rotation='counter')
   cx <- as.numeric(cx)
@@ -148,22 +149,24 @@ CircularMensual <- function(x){
   print(paste0('- La desviación estándar circular es: ', round(desv,2)))
 }
 
-# Proposito: Calcular la estadística circular anual
+# Proposito: Calcular la estadística circular anual de los últimos 5 años
 # @param: x (dataframe)
-CircularAnual <- function(x){
+CircularAnual <- function(x,inicio,fin){
   # se convierten los datos a datos circulares
-  cx <- circular(x[13,7:11], type='angles', units='degrees', template='none', modulo='asis', zero=0, rotation='counter')
+  cx <- circular(x[13,inicio:fin], type='angles', units='degrees', template='none', modulo='asis', zero=0, rotation='counter')
   cx <- as.numeric(cx)
   cx <- circular(cx)
   
   # Estadística Circular
   suma <- sum(cx)
+  media <- mean(cx)
   longresult <- rho.circular(cx)
   varianza <- (1-rho.circular(cx))
   desv <- sd.circular(cx)
   
   # se imprimen los resultados
   print(paste0('- La dosis acumulada en los últimos años es de: ', round(suma,2)))
+  print(paste0('- La media circular es: ', round(media,2)))
   print(paste0('- La longitud del vector medio es: ', round(longresult,2)))
   print(paste0('- La varianza circular es: ', round(varianza,2)))
   print(paste0('- La desviación estándar circular es: ', round(desv,2)))
@@ -174,8 +177,7 @@ CircularAnual <- function(x){
 cbarras.plot <- function(df){
   cplot <- ggplot(df[1:12,], aes(x=df$Mes[1:12], y=df$MesTotal[1:12], fill = df$Mes[1:12])) +
     geom_bar(stat="identity") +
-    ggtitle("Dosis acumulada del trabajador M03LU en los años 2010-2019 [mSv]")+
-    ylim(0,3) +
+    ylim(0,3) + # normalizados: 0.00060, no normalizados: 3
     theme_minimal() +
     theme(
       axis.title = element_blank(),
@@ -185,31 +187,17 @@ cbarras.plot <- function(df){
       plot.caption = element_text(hjust = 0)
     ) +
     coord_polar(start = 0)+
-    geom_text(aes(label=df$MesTotal[1:12]), position=position_dodge(width=0.5), vjust=0)
+    geom_text(aes(label=format(df$MesTotal[1:12],digits=2)), position=position_dodge(width=0.5), vjust=0)
   return(cplot)
-}
-
-# Proposito: Graficar una serie de tiempo con su línea de tendencia
-# @param: x (dataframe)
-ts.tendencia <- function(x){
-  # descompone el dataframe y lo une todo como un solo vector
-  df <-data.frame(datos=unlist(x[1:12,3:length(x)-1], use.names = FALSE))
-  # agrega la variable del tiempo, desde 01-2010 hasta 12-2019
-  df$tiempo = seq(as.Date("2010/1/1"), as.Date("2019/12/31"), "month")
-  # grafica la serie de tiempo
-  df.ts <- ggplot(data = df, aes(x = tiempo, y = datos))+ geom_line(size = 0.5) + 
-    stat_smooth(method = 'loess') + # agrega línea suavizada de tendencia
-    xlab("Tiempo") + ylab("Dosis [mSv]")
-  return(df.ts)
 }
 
 # Proposito: Graficar una serie de tiempo interactiva
 # @param: x (dataframe)
-ts.interactive <- function(x){
+ts.interactive <- function(x,inicio,fin){
   # descompone el dataframe y lo une todo como un solo vector
-  df <-data.frame(datos=unlist(x[1:12,3:length(x)-1], use.names = FALSE))
+  df <-data.frame(datos=unlist(x[1:12,inicio:fin], use.names = FALSE))
   # agrega la variable del tiempo, desde 01-2010 hasta 12-2019
-  df$tiempo = seq(as.Date("2010/1/1"), as.Date("2019/12/31"), "month")
+  df$tiempo = seq(as.Date("2015/1/1"), as.Date("2019/12/31"), "month")
   # conversión de data frame -> formato xts
   don <- xts(x = df$datos, order.by = df$tiempo)
   
@@ -225,22 +213,88 @@ ts.interactive <- function(x){
   return(p)
 }
 
+
 # Proposito: Graficar la parte seasonal de la serie de timepo
 # @param: x (dataframe)
-ts.season <- function(x){
+ts.season <- function(x,inicio,fin){
   # descompone el dataframe y lo une todo como un solo vector
-  df <-data.frame(datos=unlist(x[1:12,3:length(x)-1], use.names = FALSE))
+  df <-data.frame(datos=unlist(x[1:12,inicio:fin], use.names = FALSE))
   # convierte los datos a una serie de tiempo
   df.ts <-ts(df, start = c(2010,1), end=c(2019,12), frequency = 12)
   # descompone la serie de tiempo
   df.ts.desc <- decompose(df.ts)
   vec <- data.frame(datos=sapply(df.ts.desc$seasonal, as.numeric))
-  vec$tiempo = seq(as.Date("2010/1/1"), as.Date("2019/12/31"), "month")
+  vec$tiempo = seq(as.Date("2015/1/1"), as.Date("2019/12/31"), "month")
   # se grafica solamente la parte seasonal
   season.df <- ggplot(data = vec, aes(x = tiempo, y = datos))+ geom_line(size = 0.2)+
     xlab('Tiempo') + ylab('Dosis [mSv]')
   season.df <- ggplotly(season.df)
   return(season.df)
+}
+
+
+# Proposito: Correlacionar 
+# @param: x (dataframe)
+corr.pacientes <- function(x,inicio,fin){
+  # se incluyen los datos de los pacientes de 2015-2019
+  p2015 <- c(859,1033,1031,838,807,873,1054,950,1044,722,1091,1274)
+  p2016 <- c(955,1018,996,1001,1157,1164,1055,1176,1303,1340,1246,1090)
+  p2017 <- c(864,955,1150,787,1151,1175,1307,917,1522,1521,1171,1223)
+  p2018 <- c(1381,1238,999,1055,1119,1187,1231,1220,1137,1181,1255,1055)
+  p2019 <- c(1317,1043,938,864,763,1373,1288,1464,1362,1518,1110,988)
+  pacientes <- c(p2015,p2016,p2017,p2018,p2019)*(2.5) # dosis promedio en c/sesión [Gy]
+  # se incluyen los datos del trabajador
+  trabajador <- data.frame(datos=unlist(x[1:12,inicio:fin], use.names = FALSE))
+  trab.p <- data.frame(datos=trabajador,pacientes=pacientes)
+  
+  # regresión lineal 
+  regresion.plot <- ggscatter(trab.p, x = 'pacientes', y = 'datos', 
+                              add = "reg.line", conf.int = TRUE, 
+                              cor.coef = TRUE, cor.method = "kendall",
+                              xlab = "Dosis administrada en el año [Gy]", ylab = "Dosis acumulada [mSv]")
+  
+  # uniformidad de los datos y test de normalidad
+  uniform.x <- ggqqplot(trab.p$pacientes, ylab = "Dosis administrada en el año [Gy]") 
+  uniform.y <- ggqqplot(trab.p$datos, ylab = "Dosis acumulada [mSv]")
+  shapiro.test(trab.p$datos) # si 
+  shapiro.test(trab.p$pacientes) 
+  
+  # resultados
+  print(cor.test(trab.p$pacientes, trab.p$datos, method="kendall")) # prueba de correlación
+  #print(shapiro.test(trab.p$datos))
+  return(regresion.plot)
+}
+
+
+# Propósito: Normaliza los datos de cada trabajador con respecto a la dosis que el acelerador administró en cada mes
+# @param: x (dataframe)
+normalizar <- function(x,inicio,fin){
+  # se incluyen los datos de los pacientes de 2015-2019
+  p2015 <- c(859,1033,1031,838,807,873,1054,950,1044,722,1091,1274)
+  p2016 <- c(955,1018,996,1001,1157,1164,1055,1176,1303,1340,1246,1090)
+  p2017 <- c(864,955,1150,787,1151,1175,1307,917,1522,1521,1171,1223)
+  p2018 <- c(1381,1238,999,1055,1119,1187,1231,1220,1137,1181,1255,1055)
+  p2019 <- c(1317,1043,938,864,763,1373,1288,1464,1362,1518,1110,988)
+  pacientes <- c(p2015,p2016,p2017,p2018,p2019)*(2.5) # dosis promedio en c/sesión [Gy]
+  
+  # se escogen los datos de 2015-2019
+  meses = c('ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE','TOTAL')
+  new.x <- sapply(x[1:12,inicio:fin], as.numeric)
+  
+  # se normaliza
+  norm.x <- cbind(new.x/pacientes)
+  norm.x <- as.data.frame(norm.x)
+  
+  # se calcula la suma de cada mes y de todos los años
+  norm.x$MesTotal <- rowSums(sapply(norm.x, as.numeric)) # filas
+  atotal <- colSums(sapply(norm.x, as.numeric)) # columnas
+  norm.x <- rbind(norm.x, atotal)
+  
+  # se combina todo en un dataframe
+  norm.x <- cbind(Mes=meses,norm.x)
+  norm.x <- as.data.frame(norm.x)
+  norm.x$Mes <- factor(meses, levels=unique(meses)) 
+  return(norm.x)
 }
 
 
@@ -325,13 +379,11 @@ I22CR <- FilasFactor(I22CR)
 
 # Trabajador M03LU
 cbarras.plot(M03LU)
-#ts.tendencia(M03LU) 
-ts.interactive(M03LU)
-ts.season(M03LU)
+ts.interactive(M03LU,7,11)
+ts.season(M03LU,7,11)
 
 # Trabajador M05MO
 cbarras.plot(M05MO)
-#ts.tendencia(M05MO)
 ts.interactive(M05MO)
 ts.season(M05MO)
 #-----------------------------------------------------------------------------------------------------------
@@ -383,48 +435,82 @@ ts.interactive(I22CR)
 # MEDICOS
 
 # Trabajador M03LU
-CircularMensual(M03LU)
-CircularAnual(M03LU)
+CircularMensual(M03LU,2,11) # 2010-2019
+CircularAnual(M03LU,7,11) # 2015-2019
 
 # Trabajador M05MO
-CircularMensual(M05MO)
-CircularAnual(M05MO)
+CircularMensual(M05MO,2,11)
+CircularAnual(M05MO,7,11)
 #-----------------------------------------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------------------------------------
 # FISICOS MEDICOS
 
 # Trabajador F04EH
-CircularMensual(F04EH)
-CircularAnual(F04EH)
+CircularMensual(F04EH,2,11)
+CircularAnual(F04EH,7,11)
 
 # Trabajador F10LD
-CircularMensual(F10LD)
-CircularAnual(F10LD)
+CircularMensual(F10LD,2,11)
+CircularAnual(F10LD,7,11)
 #-----------------------------------------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------------------------------------
 # TECNICOS
 
 # Trabajador T01EE
-CircularMensual(T01EE)
-CircularAnual(T01EE)
+CircularMensual(T01EE,2,11)
+CircularAnual(T01EE,7,11)
 
 # Trabajador T26PM
-CircularMensual(T26PM)
-CircularAnual(T26PM)
+CircularMensual(T26PM,2,11)
+CircularAnual(T26PM,7,11)
 #-----------------------------------------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------------------------------------
 # INGENIERO
 
 # Trabajador I22CR
-CircularMensual(I22CR) # media =1.61, R=0.98, V=0.02, Desv=0.2
+CircularMensual(I22CR,2,11) # media =1.61, R=0.98, V=0.02, Desv=0.2
 # nueva funcion = 0.16, 1, 0, 0.06
-CircularAnual(I22CR)
+CircularAnual(I22CR,7,11)
 #-----------------------------------------------------------------------------------------------------------
 
-prueba <-data.frame(a=unlist(I22CR[1:12,3:length(I22CR)-1], use.names = FALSE))
+
+
+#------------------------------
+# Correlación de datos
+#------------------------------
+
+#-----------------------------------------------------------------------------------------------------------
+# MEDICOS
+
+# Trabajador M03LU
+corr.pacientes(M03LU,7,11) # 2010-2019
+
+# Trabajador M05MO
+
+#-----------------------------------------------------------------------------------------------------------
+
+
+
+
+#------------------------------
+# Datos normalizados
+#------------------------------
+
+#-----------------------------------------------------------------------------------------------------------
+# MEDICOS
+
+# Trabajador M03LU
+normM03LU <- normalizar(M03LU,7,11)
+cbarras.plot(normM03LU) # se ajusta el ylim 
+ts.interactive(normM03LU,2,6) # 2015-2019
+ts.season(normM03LU,2,6) # 2015-2019
+corr.pacientes(normM03LU,2,6) 
+#-----------------------------------------------------------------------------------------------------------
+
+
 
 
 
